@@ -3,7 +3,7 @@ import httpx
 from typing import Dict, Any, Optional
 from fastapi import UploadFile
 
-from app.core.config import settings
+from ..core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ async def create_retrieval_task(task_data: Dict[str, Any]) -> Dict[str, Any]:
             # Devolver la respuesta del servicio
             return response.json()
         except httpx.HTTPStatusError as e:
-            logger.error(f"Error HTTP del servicio de recuperación: {e.response.status_code} - {e.response.text}")
+            logger.error(f"Error HTTP del servicio de recuperación: {settings.data_retrieval_service_url} {e.response.status_code} - {e.response.text}")
             raise Exception(f"Error del servicio de recuperación: {e.response.status_code} - {e.response.text}")
         except Exception as e:
             logger.error(f"Error al comunicarse con el servicio de recuperación: {str(e)}")

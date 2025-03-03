@@ -2,8 +2,8 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.core.config import settings
-from app.api.routes import router
+from .core.config import settings
+from .api.routes import router
 
 # Configurar logging
 logging.basicConfig(
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     import uvicorn
     
     uvicorn.run(
-        "app.main:app",
+        "main:app",
         host="0.0.0.0",
         port=settings.port,
         reload=settings.debug

@@ -1,6 +1,6 @@
 ### Variables
 @host = http://localhost:8080
-@authHost = http://localhost:8081
+@authHost = http://localhost:8001
 @dataRetrievalHost = http://localhost:8000
 
 ### Verificación de salud del BFF
@@ -54,7 +54,7 @@ Content-Type: application/json
 
 ### Prueba directa del servicio de autenticación (debería ser exitosa)
 POST {{authHost}}/auth
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkJGRiBTZXJ2aWNlIiwiaWF0IjoxNjE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk
 
 ### Prueba directa del servicio de autenticación (debería fallar)
 POST {{authHost}}/auth

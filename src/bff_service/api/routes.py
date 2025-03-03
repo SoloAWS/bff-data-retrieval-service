@@ -3,8 +3,8 @@ from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Depends
 from typing import Dict, Any, Optional
 from pydantic import BaseModel
 
-from app.services.auth_service import verify_authorization
-from app.services.data_retrieval_service import (
+from ..services.auth_service import verify_authorization
+from ..services.data_retrieval_service import (
     create_retrieval_task,
     start_retrieval_task,
     upload_image_to_task
