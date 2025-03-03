@@ -1,5 +1,5 @@
 ### Variables
-@host = http://localhost:8080
+@host = https://bff-retrieval-app-1017406670325.us-central1.run.app
 @authHost = http://localhost:8001
 @dataRetrievalHost = http://localhost:8000
 
@@ -13,6 +13,7 @@ GET {{host}}/health
 ### Crear Tarea de Recuperación
 # @name createTask
 POST {{host}}/api/bff/v1/data-retrieval/tasks
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk
 Content-Type: application/json
 
 {

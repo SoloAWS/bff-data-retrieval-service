@@ -1,5 +1,5 @@
 import logging
-from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Depends
+from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Depends, Header
 from typing import Dict, Any, Optional
 from pydantic import BaseModel
 
@@ -31,14 +31,15 @@ class CreateTaskRequest(BaseModel):
 
 @router.post("/data-retrieval/tasks", status_code=201)
 async def api_create_task(
-    request: CreateTaskRequest
+    request: CreateTaskRequest,
+    authorization: str = Header(None)
 ):
     """
     Endpoint para crear una tarea de recuperación de imágenes.
     Primero verifica autorización con el servicio auth y luego reenvía al servicio data-retrieval.
     """
     # Verificar autorización
-    is_authorized = await verify_authorization()
+    is_authorized = await verify_authorization(authorization)
     if not is_authorized:
         logger.warning("Intento de acceso no autorizado al crear tarea")
         raise HTTPException(status_code=401, detail="No autorizado para acceder a este recurso")
@@ -56,14 +57,15 @@ async def api_create_task(
 
 @router.post("/data-retrieval/tasks/{task_id}/start")
 async def api_start_task(
-    task_id: str
+    task_id: str,
+    authorization: str = Header(None)
 ):
     """
     Endpoint para iniciar una tarea de recuperación.
     Primero verifica autorización con el servicio auth y luego reenvía al servicio data-retrieval.
     """
     # Verificar autorización
-    is_authorized = await verify_authorization()
+    is_authorized = await verify_authorization(authorization)
     if not is_authorized:
         logger.warning(f"Intento de acceso no autorizado al iniciar tarea {task_id}")
         raise HTTPException(status_code=401, detail="No autorizado para acceder a este recurso")
@@ -86,14 +88,15 @@ async def api_upload_image(
     format: str = Form(...),
     modality: str = Form(...),
     region: str = Form(...),
-    dimensions: Optional[str] = Form(None)
+    dimensions: Optional[str] = Form(None),
+    authorization: str = Header(None)
 ):
     """
     Endpoint para subir una imagen a una tarea.
     Primero verifica autorización con el servicio auth y luego reenvía al servicio data-retrieval.
     """
     # Verificar autorización
-    is_authorized = await verify_authorization()
+    is_authorized = await verify_authorization(authorization)
     if not is_authorized:
         logger.warning(f"Intento de acceso no autorizado al subir imagen para tarea {task_id}")
         raise HTTPException(status_code=401, detail="No autorizado para acceder a este recurso")
