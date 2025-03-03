@@ -1,0 +1,64 @@
+### Variables
+@host = http://localhost:8080
+@authHost = http://localhost:8081
+@dataRetrievalHost = http://localhost:8000
+
+### Verificación de salud del BFF
+GET {{host}}/health
+
+### ---------------------------------------------------
+### ENDPOINTS DEL BFF
+### ---------------------------------------------------
+
+### Crear Tarea de Recuperación
+# @name createTask
+POST {{host}}/api/bff/v1/data-retrieval/tasks
+Content-Type: application/json
+
+{
+  "source_type": "HOSPITAL",
+  "source_name": "Hospital San Juan",
+  "source_id": "HSJ-001",
+  "location": "Bogotá",
+  "retrieval_method": "DIRECT_UPLOAD",
+  "batch_id": "BATCH-2025-01",
+  "priority": 2,
+  "metadata": {
+    "department": "Radiología",
+    "project": "Estudio COVID-2025"
+  }
+}
+
+### Guardar el task_id para las siguientes peticiones
+@taskId = {{createTask.response.body.task_id}}
+
+### Iniciar Tarea
+POST {{host}}/api/bff/v1/data-retrieval/tasks/{{taskId}}/start
+Content-Type: application/json
+
+{}
+
+### Subir Imagen a Tarea
+# Nota: Este tipo de solicitud es difícil de probar con REST Client 
+# Puedes usar Postman o curl para esto. Abajo hay un ejemplo de curl
+# curl -X POST {{host}}/api/bff/v1/data-retrieval/tasks/{{taskId}}/images \
+#   -F "file=@/ruta/a/tu/imagen.jpg" \
+#   -F "format=DICOM" \
+#   -F "modality=XRAY" \
+#   -F "region=CHEST" \
+#   -F "dimensions=1024x768"
+
+### ---------------------------------------------------
+### ENDPOINTS DIRECTOS (para verificación)
+### ---------------------------------------------------
+
+### Prueba directa del servicio de autenticación (debería ser exitosa)
+POST {{authHost}}/auth
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkJGRiBTZXJ2aWNlIiwiaWF0IjoxNjE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+### Prueba directa del servicio de autenticación (debería fallar)
+POST {{authHost}}/auth
+Authorization: Bearer token_invalido
+
+### Verificación de salud del servicio de recuperación de datos
+GET {{dataRetrievalHost}}/health
