@@ -6,12 +6,12 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY src/bff-service/app ./app
+COPY src/bff-service ./app
 
-COPY src/.env .
+COPY src/.env ./app
 
-# Exponer el puerto
+# Expose the application port
 EXPOSE 8080
 
-# Comando para iniciar la aplicación
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Start the application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--app-dir", "/app"]
