@@ -35,6 +35,7 @@ Content-Type: application/json
 
 ### Iniciar Tarea
 POST {{host}}/api/bff/v1/data-retrieval/tasks/{{taskId}}/start
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk
 Content-Type: application/json
 
 {}
@@ -49,6 +50,7 @@ Content-Type: application/json
 #   -F "region=CHEST" \
 #   -F "dimensions=1024x768"
 
+curl -X POST https://bff-retrieval-app-1017406670325.us-central1.run.app/api/bff/v1/data-retrieval/tasks/2757c2d1-d3dd-44e8-8066-19343c14e617/images     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk"     -F "file=@rest/xray.jpg"     -F "format=DICOM"     -F "modality=XRAY"     -F "region=CHEST"     -F "dimensions=1024x768" 
 ### ---------------------------------------------------
 ### ENDPOINTS DIRECTOS (para verificación)
 ### ---------------------------------------------------
