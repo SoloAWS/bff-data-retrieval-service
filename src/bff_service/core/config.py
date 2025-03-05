@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, Dict
 from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 
@@ -26,6 +26,18 @@ class Settings(BaseSettings):
         "AUTH_TOKEN", 
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk"
     )
+    
+    # Configuración de Pulsar
+    pulsar_service_url: str = os.getenv("PULSAR_SERVICE_URL", "pulsar://pulsar-broker:6650")
+    pulsar_token: str = os.getenv("PULSAR_TOKEN", "")
+    pulsar_client_config: Dict = {}
+    
+    # Mapeo de comandos a tópicos de Pulsar
+    pulsar_topics_mapping: Dict[str, str] = {
+        "CreateRetrievalTask": "persistent://public/default/data-retrieval-commands",
+        "StartRetrievalTask": "persistent://public/default/data-retrieval-commands",
+        "UploadImage": "persistent://public/default/data-retrieval-commands"
+    }
     
     class Config:
         env_file = ".env"
