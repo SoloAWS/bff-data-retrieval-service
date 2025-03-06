@@ -48,22 +48,36 @@ class CommandResponse(BaseModel):
 
 class TaskResponse(BaseModel):
     """Response schema for task information"""
-    task_id: str
+    id: str
     batch_id: str
-    source: str
+    source_type: str
+    source_name: str
+    source_id: str
+    location: str
+    retrieval_method: str
+    priority: int
+    storage_path: str
     status: str
     message: Optional[str] = None
+    total_images: int = 0
+    successful_images: int = 0
+    failed_images: int = 0
+    details: Optional[Dict[str, Any]] = None
+    created_at: str
     started_at: Optional[str] = None
     completed_at: Optional[str] = None
-    total_images: Optional[int] = None
-    successful_images: Optional[int] = None
-    failed_images: Optional[int] = None
-    images_count: Optional[int] = None
+    images_count: int = 0
+    result: Optional[Dict[str, Any]] = None
+    
+    class Config:
+        # Allow extra fields in case API response contains additional data
+        extra = "ignore"
 
 
 class ImageInfo(BaseModel):
     """Schema for image information"""
-    image_id: str
+    id: str
+    task_id: str
     filename: str
     file_path: str
     format: str
@@ -74,6 +88,10 @@ class ImageInfo(BaseModel):
     is_stored: bool = False
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
+    
+    class Config:
+        # Allow extra fields in case API response contains additional data
+        extra = "ignore"
 
 
 class ImageUploadResponse(BaseModel):
@@ -81,6 +99,11 @@ class ImageUploadResponse(BaseModel):
     task_id: str
     image_id: str
     filename: str
+    file_path: str
     modality: str
     region: str
     size_bytes: int
+    
+    class Config:
+        # Allow extra fields in case API response contains additional data
+        extra = "ignore"

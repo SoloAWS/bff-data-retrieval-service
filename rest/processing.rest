@@ -1,7 +1,10 @@
 ### Variables
-@host = https://bff-retrieval-app-1017406670325.us-central1.run.app
-@authHost = http://localhost:8001
-@dataRetrievalHost = http://localhost:8000
+#@host = https://bff-retrieval-app-1017406670325.us-central1.run.app
+@host = http://localhost:8004
+@authHost = https://auth-app-1017406670325.us-central1.run.app
+@dataRetrievalHost = https://data-retrieval-app-1017406670325.us-central1.run.app
+
+@taskId = cdca6369-313e-49e0-9acb-867504550303
 
 ### Verificación de salud del BFF
 GET {{host}}/health
@@ -10,6 +13,7 @@ GET {{host}}/health
 ### ENDPOINTS DEL BFF
 ### ---------------------------------------------------
 
+@batch = "BATCH-2025-02"
 ### Crear Tarea de Recuperación
 # @name createTask
 POST {{host}}/api/bff/v1/data-retrieval/tasks
@@ -30,8 +34,25 @@ Content-Type: application/json
   }
 }
 
-### Guardar el task_id para las siguientes peticiones
-@taskId = {{createTask.response.body.task_id}}
+### Listar Tareas Pendientes
+# @name GetPendingTasks
+GET {{host}}/api/bff/v1/data-retrieval/tasks?pending_only=true
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk
+
+### Obtener un batch específico
+# @name GetBatch
+GET {{host}}/api/bff/v1/data-retrieval/tasks?batch_id={{createTask.request.body.batch_id}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk
+Content-Type: application/json
+
+### Obtener un task específico
+# @name GetTaskById
+GET {{host}}/api/bff/v1/data-retrieval/tasks/{{taskId}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk
+
+### Get Images for Task
+GET {{host}}/api/bff/v1/data-retrieval/tasks/{{taskId}}/images
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk
 
 ### Iniciar Tarea
 POST {{host}}/api/bff/v1/data-retrieval/tasks/{{taskId}}/start
@@ -41,16 +62,38 @@ Content-Type: application/json
 {}
 
 ### Subir Imagen a Tarea
-# Nota: Este tipo de solicitud es difícil de probar con REST Client 
-# Puedes usar Postman o curl para esto. Abajo hay un ejemplo de curl
-# curl -X POST {{host}}/api/bff/v1/data-retrieval/tasks/{{taskId}}/images \
-#   -F "file=@/ruta/a/tu/imagen.jpg" \
-#   -F "format=DICOM" \
-#   -F "modality=XRAY" \
-#   -F "region=CHEST" \
-#   -F "dimensions=1024x768"
+curl --location 'http://localhost:8004/api/bff/v1/data-retrieval/tasks/2757c2d1-d3dd-44e8-8066-19343c14e617/images' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk' \
+--form 'file=@".image.jpg"' \
+--form 'format="DICOM"' \
+--form 'modality="XRAY"' \
+--form 'region="CHEST"' \
+--form 'dimensions="1024x768"'
 
-curl -X POST https://bff-retrieval-app-1017406670325.us-central1.run.app/api/bff/v1/data-retrieval/tasks/2757c2d1-d3dd-44e8-8066-19343c14e617/images     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk"     -F "file=@rest/xray.jpg"     -F "format=DICOM"     -F "modality=XRAY"     -F "region=CHEST"     -F "dimensions=1024x768" 
+POST {{host}}/api/bff/v1/data-retrieval/tasks/{{taskId}}/images
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="format"
+
+DICOM
+--WebAppBoundary
+Content-Disposition: form-data; name="modality"
+
+XRAY
+--WebAppBoundary
+Content-Disposition: form-data; name="region"
+
+CHEST
+--WebAppBoundary
+Content-Disposition: form-data; name="dimensions"
+
+1024x768
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="image.jpg"
+Content-Type: application/dicom
+
 ### ---------------------------------------------------
 ### ENDPOINTS DIRECTOS (para verificación)
 ### ---------------------------------------------------

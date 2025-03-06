@@ -4,7 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .core.config import settings
 from .api import api_router
-from .services.messaging.pulsar_publisher import PulsarPublisher
+from .services.dependencies import (
+    initialize_pulsar_publisher,
+    close_pulsar_publisher,
+    get_pulsar_publisher
+)
 
 # Configurar logging
 logging.basicConfig(
@@ -12,9 +16,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
-# Instancia global del publicador de Pulsar
-pulsar_publisher = None
 
 # Crear la aplicación FastAPI
 app = FastAPI(
@@ -50,40 +51,17 @@ async def health_check():
 @app.on_event("startup")
 async def startup_event():
     """Inicializa recursos al iniciar la aplicación"""
-    global pulsar_publisher
-    
-    try:
-        # Inicializar el publicador de Pulsar
-        if settings.pulsar_service_url:
-            pulsar_publisher = PulsarPublisher(
-                service_url=settings.pulsar_service_url,
-                topics_mapping=settings.pulsar_topics_mapping,
-                token=settings.pulsar_token,
-                client_config=settings.pulsar_client_config
-            )
-            logger.info("Pulsar publisher initialized successfully")
-        else:
-            logger.warning("Pulsar service URL not configured, messaging disabled")
-    except Exception as e:
-        logger.error(f"Error initializing Pulsar publisher: {str(e)}")
-        logger.warning("Continuing without Pulsar messaging")
+    # Inicializar el publicador de Pulsar
+    initialize_pulsar_publisher()
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """Limpia recursos al cerrar la aplicación"""
-    global pulsar_publisher
-    
-    if pulsar_publisher:
-        try:
-            pulsar_publisher.close()
-            logger.info("Pulsar publisher closed successfully")
-        except Exception as e:
-            logger.error(f"Error closing Pulsar publisher: {str(e)}")
+    # Cerrar el publicador de Pulsar
+    close_pulsar_publisher()
 
-# Dependency to get pulsar publisher
-def get_pulsar_publisher():
-    """Returns the Pulsar publisher instance"""
-    return pulsar_publisher
+# Hacer accesible el getter desde otros módulos
+__all__ = ['app', 'get_pulsar_publisher']
 
 if __name__ == "__main__":
     import uvicorn
