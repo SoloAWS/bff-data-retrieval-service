@@ -4,7 +4,7 @@
 @authHost = https://auth-app-1017406670325.us-central1.run.app
 @dataRetrievalHost = https://data-retrieval-app-1017406670325.us-central1.run.app
 
-@taskId = cdca6369-313e-49e0-9acb-867504550303
+@taskId = c2bb8818-d346-409f-9d1e-9cff12bafcc9
 
 ### Verificación de salud del BFF
 GET {{host}}/health
@@ -13,7 +13,6 @@ GET {{host}}/health
 ### ENDPOINTS DEL BFF
 ### ---------------------------------------------------
 
-@batch = "BATCH-2025-02"
 ### Crear Tarea de Recuperación
 # @name createTask
 POST {{host}}/api/bff/v1/data-retrieval/tasks
@@ -22,11 +21,11 @@ Content-Type: application/json
 
 {
   "source_type": "HOSPITAL",
-  "source_name": "Hospital San Juan",
+  "source_name": "Hospital San Juan de Dios",
   "source_id": "HSJ-001",
   "location": "Bogotá",
   "retrieval_method": "DIRECT_UPLOAD",
-  "batch_id": "BATCH-2025-01",
+  "batch_id": "BATCH-2025-010",
   "priority": 2,
   "metadata": {
     "department": "Radiología",

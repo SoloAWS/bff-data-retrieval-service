@@ -54,7 +54,7 @@ async def api_create_task(
         raise HTTPException(status_code=500, detail=f"Error de comunicación con el servicio: {str(e)}")
 
 
-@router.post("/tasks/{task_id}/start", status_code=203, response_model=CommandResponse)
+@router.post("/tasks/{task_id}/start", status_code=203)
 async def api_start_task(
     task_id: str,
     authorization: str = Header(None),
@@ -80,7 +80,7 @@ async def api_start_task(
     try:
         response = await data_retrieval_service.start_retrieval_task(task_id)
         logger.info(f"Comando de inicio de tarea enviado con éxito: {task_id}")
-        return response
+        return f"Comando de inicio de tarea enviado con éxito: {task_id}" if response else "Error al enviar comando de inicio de tarea"
     except Exception as e:
         logger.error(f"Error al iniciar tarea {task_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error de comunicación con el servicio: {str(e)}")

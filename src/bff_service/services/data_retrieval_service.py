@@ -81,7 +81,7 @@ class DataRetrievalService:
                 logger.error(f"Error al comunicarse con el servicio de recuperación: {str(e)}")
                 raise
     
-    async def start_retrieval_task(self, task_id: str) -> Dict[str, Any]:
+    async def start_retrieval_task(self, task_id: str) -> bool:
         """
         Envía un comando para iniciar una tarea existente.
         
@@ -107,25 +107,25 @@ class DataRetrievalService:
             )
             
             # Añadir información de la tarea a la respuesta
-            task_info = await self.get_retrieval_task(task_id)
-            if task_info:
-                response.update({
-                    "task_id": task_id,
-                    "batch_id": task_info.get("batch_id", ""),
-                    "source": task_info.get("source_name", ""),
-                    "status": "IN_PROGRESS"
-                })
-            else:
-                response.update({
-                    "task_id": task_id,
-                    "status": "IN_PROGRESS"
-                })
+            # task_info = await self.get_retrieval_task(task_id)
+            # if task_info:
+            #     response.update({
+            #         "task_id": task_id,
+            #         "batch_id": task_info.get("batch_id", ""),
+            #         "source": task_info.get("source_name", ""),
+            #         "status": "IN_PROGRESS"
+            #     })
+            # else:
+            #     response.update({
+            #         "task_id": task_id,
+            #         "status": "IN_PROGRESS"
+            #     })
             
-            return response
+            return True
         except Exception as e:
             logger.error(f"Error al publicar comando StartRetrievalTask: {str(e)}")
             # Intentar fallback a HTTP
-            return await self._start_retrieval_task_http(task_id)
+            return False
     
     async def _start_retrieval_task_http(self, task_id: str) -> Dict[str, Any]:
         """
