@@ -31,7 +31,7 @@ gcloud run deploy $APP_NAME \
     --platform managed \
     --region $REGION \
     --port $PORT \
-    --set-env-vars="AUTH_SERVICE_URL=${AUTH_SERVICE_URL},DATA_RETRIEVAL_SERVICE_URL=${DATA_RETRIEVAL_SERVICE_URL},AUTH_TOKEN=${AUTH_TOKEN}" \
+    --set-env-vars="AUTH_SERVICE_URL=${AUTH_SERVICE_URL},DATA_RETRIEVAL_SERVICE_URL=${DATA_RETRIEVAL_SERVICE_URL},AUTH_TOKEN=${AUTH_TOKEN},PULSAR_SERVICE_URL=${PULSAR_SERVICE_URL},PULSAR_TOKEN=${PULSAR_TOKEN}" \
     --allow-unauthenticated
 
 echo "Deployment complete!"
