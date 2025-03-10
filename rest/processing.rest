@@ -4,7 +4,7 @@
 @authHost = https://auth-app-1017406670325.us-central1.run.app
 @dataRetrievalHost = https://data-retrieval-app-1017406670325.us-central1.run.app
 
-@taskId = 0e7496ee-2172-4e84-8169-14e7493ca0cb
+@taskId = 33b3e660-c4a2-4a11-8864-63b253f50894
 
 ### Verificación de salud del BFF
 GET {{host}}/health
@@ -32,26 +32,11 @@ Content-Type: application/json
     "project": "Estudio COVID-2025"
   }
 }
-
-### Listar Tareas Pendientes
-# @name GetPendingTasks
-GET {{host}}/api/bff/v1/data-retrieval/tasks?pending_only=true
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk
-
 ### Obtener un batch específico
 # @name GetBatch
 GET {{host}}/api/bff/v1/data-retrieval/tasks?batch_id={{createTask.request.body.batch_id}}
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk
 Content-Type: application/json
-
-### Obtener un task específico
-# @name GetTaskById
-GET {{host}}/api/bff/v1/data-retrieval/tasks/{{taskId}}
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk
-
-### Get Images for Task
-GET {{host}}/api/bff/v1/data-retrieval/tasks/{{taskId}}/images
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk
 
 ### Iniciar Tarea
 POST {{host}}/api/bff/v1/data-retrieval/tasks/{{taskId}}/start
@@ -61,49 +46,29 @@ Content-Type: application/json
 {}
 
 ### Subir Imagen a Tarea
-curl --location 'https://bff-retrieval-app-1017406670325.us-central1.run.app/api/bff/v1/data-retrieval/tasks/0e7496ee-2172-4e84-8169-14e7493ca0cb/images' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk' \
---form 'file=@"./image.png"' \
---form 'format=DICOM' \
---form 'modality=MRI' \
---form 'region=CHEST' \
---form 'dimensions=1024x768'
-
 POST {{host}}/api/bff/v1/data-retrieval/tasks/{{taskId}}/images
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk
-Content-Type: multipart/form-data; boundary=WebAppBoundary
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
---WebAppBoundary
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="image.png"
+Content-Type: image/png
+
+< ./image.png
+------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="format"
 
 DICOM
---WebAppBoundary
+------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="modality"
 
-XRAY
---WebAppBoundary
+MRI
+------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="region"
 
 CHEST
---WebAppBoundary
+------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="dimensions"
 
 1024x768
---WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="image.jpg"
-Content-Type: application/dicom
-
-### ---------------------------------------------------
-### ENDPOINTS DIRECTOS (para verificación)
-### ---------------------------------------------------
-
-### Prueba directa del servicio de autenticación (debería ser exitosa)
-POST {{authHost}}/auth
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk
-
-### Prueba directa del servicio de autenticación (debería fallar)
-POST {{authHost}}/auth
-Authorization: Bearer token_invalido
-
-### Verificación de salud del servicio de recuperación de datos
-GET {{dataRetrievalHost}}/health
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
