@@ -1,0 +1,1090 @@
+{
+	"info": {
+		"_postman_id": "a3e1b4b6-7db6-4b0b-88cd-f215c3b3affa",
+		"name": "SaludTech BFF Service",
+		"description": "Esta colección contiene los endpoints principales del Backend-for-Frontend (BFF) que sirve como punto de entrada para la gestión de imágenes médicas en SaludTech.\n\nPermite a los proveedores de salud gestionar las tareas de carga de imágenes médicas.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14852969"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{bff_host}}/health",
+					"host": [
+						"{{bff_host}}"
+					],
+					"path": [
+						"health"
+					]
+				},
+				"description": "Endpoint para verificar el estado del servicio BFF. Útil para comprobar si el servicio está disponible y funcionando correctamente."
+			},
+			"response": [
+				{
+					"name": "Health Check Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{bff_host}}/health",
+							"host": [
+								"{{bff_host}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": \"ok\",\n    \"service\": \"medical-imaging-bff\",\n    \"version\": \"1.0.0\",\n    \"environment\": \"development\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Crear Tarea de Recuperación",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{auth_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"source_type\": \"HOSPITAL\",\n  \"source_name\": \"Hospital San Juan de Dios\",\n  \"source_id\": \"HSJ-001\",\n  \"location\": \"Bogotá\",\n  \"retrieval_method\": \"DIRECT_UPLOAD\",\n  \"batch_id\": \"BATCH-2025-010\",\n  \"priority\": 2,\n  \"metadata\": {\n    \"department\": \"Radiología\",\n    \"project\": \"Estudio COVID-2025\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks",
+					"host": [
+						"{{bff_host}}"
+					],
+					"path": [
+						"api",
+						"bff",
+						"v1",
+						"data-retrieval",
+						"tasks"
+					]
+				},
+				"description": "Crea una nueva tarea de recuperación de imágenes médicas. Este es el primer paso del flujo de trabajo para cargar imágenes médicas al sistema.\n\nEl BFF primero verifica la autorización a través del servicio de autenticación y luego envía un comando a través de Pulsar al servicio de data-retrieval."
+			},
+			"response": [
+				{
+					"name": "Crear Tarea - Éxito",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"source_type\": \"HOSPITAL\",\n  \"source_name\": \"Hospital San Juan de Dios\",\n  \"source_id\": \"HSJ-001\",\n  \"location\": \"Bogotá\",\n  \"retrieval_method\": \"DIRECT_UPLOAD\",\n  \"batch_id\": \"BATCH-2025-010\",\n  \"priority\": 2,\n  \"metadata\": {\n    \"department\": \"Radiología\",\n    \"project\": \"Estudio COVID-2025\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks",
+							"host": [
+								"{{bff_host}}"
+							],
+							"path": [
+								"api",
+								"bff",
+								"v1",
+								"data-retrieval",
+								"tasks"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 203,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"command_id\": \"f67b2a3e-9c8d-4f5e-b1a2-c3d4e5f6a7b8\",\n    \"correlation_id\": \"a1b2c3d4-e5f6-a7b8-c9d0-e1f2a3b4c5d6\",\n    \"topic\": \"persistent://public/default/data-retrieval-commands\",\n    \"message_id\": \"CAAQAw==\",\n    \"status\": \"published\",\n    \"task_id\": \"0e7496ee-2172-4e84-8169-14e7493ca0cb\",\n    \"batch_id\": \"BATCH-2025-010\",\n    \"source\": \"Hospital San Juan de Dios\"\n}"
+				},
+				{
+					"name": "Crear Tarea - Error de Autorización",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer invalid_token",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"source_type\": \"HOSPITAL\",\n  \"source_name\": \"Hospital San Juan de Dios\",\n  \"source_id\": \"HSJ-001\",\n  \"location\": \"Bogotá\",\n  \"retrieval_method\": \"DIRECT_UPLOAD\",\n  \"batch_id\": \"BATCH-2025-010\",\n  \"priority\": 2,\n  \"metadata\": {\n    \"department\": \"Radiología\",\n    \"project\": \"Estudio COVID-2025\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks",
+							"host": [
+								"{{bff_host}}"
+							],
+							"path": [
+								"api",
+								"bff",
+								"v1",
+								"data-retrieval",
+								"tasks"
+							]
+						}
+					},
+					"status": "Unauthorized",
+					"code": 401,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"detail\": \"No autorizado para acceder a este recurso\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Obtener Batch Específico",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{auth_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks?batch_id={{batch_id}}",
+					"host": [
+						"{{bff_host}}"
+					],
+					"path": [
+						"api",
+						"bff",
+						"v1",
+						"data-retrieval",
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "batch_id",
+							"value": "{{batch_id}}"
+						}
+					]
+				},
+				"description": "Recupera todas las tareas asociadas a un ID de batch específico. Útil para seguir el progreso de un conjunto de imágenes médicas relacionadas.\n\nEl BFF verifica la autorización y luego consulta directamente al servicio de data-retrieval."
+			},
+			"response": [
+				{
+					"name": "Obtener Batch - Éxito",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks?batch_id=BATCH-2025-010",
+							"host": [
+								"{{bff_host}}"
+							],
+							"path": [
+								"api",
+								"bff",
+								"v1",
+								"data-retrieval",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "batch_id",
+									"value": "BATCH-2025-010"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": \"bcf0fd0a-8369-41c0-ba45-ec419003ff45\",\n        \"batch_id\": \"BATCH-2025-010\",\n        \"source_type\": \"HOSPITAL\",\n        \"source_name\": \"Hospital San Juan de Dios\",\n        \"source_id\": \"HSJ-001\",\n        \"location\": \"Bogotá\",\n        \"retrieval_method\": \"DIRECT_UPLOAD\",\n        \"priority\": 2,\n        \"storage_path\": \"/tmp/data_retrieval_images/hospital/BATCH-2025-010\",\n        \"status\": \"PENDING\",\n        \"message\": null,\n        \"total_images\": 0,\n        \"successful_images\": 0,\n        \"failed_images\": 0,\n        \"details\": null,\n        \"created_at\": \"2025-03-09T19:30:03.348654\",\n        \"started_at\": null,\n        \"completed_at\": null,\n        \"images_count\": 0,\n        \"result\": null\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Obtener Tarea Específica",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{auth_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks/{{task_id}}",
+					"host": [
+						"{{bff_host}}"
+					],
+					"path": [
+						"api",
+						"bff",
+						"v1",
+						"data-retrieval",
+						"tasks",
+						"{{task_id}}"
+					]
+				},
+				"description": "Recupera información detallada sobre una tarea específica a partir de su ID. Muestra el estado actual de la tarea, incluyendo el número de imágenes cargadas, procesadas, y si ha habido errores.\n\nEl BFF verifica la autorización y luego consulta directamente al servicio de data-retrieval."
+			},
+			"response": [
+				{
+					"name": "Obtener Tarea - Éxito",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks/0e7496ee-2172-4e84-8169-14e7493ca0cb",
+							"host": [
+								"{{bff_host}}"
+							],
+							"path": [
+								"api",
+								"bff",
+								"v1",
+								"data-retrieval",
+								"tasks",
+								"0e7496ee-2172-4e84-8169-14e7493ca0cb"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"0e7496ee-2172-4e84-8169-14e7493ca0cb\",\n    \"batch_id\": \"BATCH-2025-010\",\n    \"source_type\": \"HOSPITAL\",\n    \"source_name\": \"Hospital San Juan de Dios\",\n    \"source_id\": \"HSJ-001\",\n    \"location\": \"Bogotá\",\n    \"retrieval_method\": \"DIRECT_UPLOAD\",\n    \"priority\": 2,\n    \"storage_path\": \"/data/retrieval/HSJ-001/BATCH-2025-010\",\n    \"status\": \"IN_PROGRESS\",\n    \"message\": \"La tarea está en progreso\",\n    \"total_images\": 5,\n    \"successful_images\": 3,\n    \"failed_images\": 0,\n    \"details\": {\n        \"last_processing_timestamp\": \"2025-03-09T12:15:30Z\",\n        \"estimated_completion\": \"2025-03-09T12:45:00Z\"\n    },\n    \"created_at\": \"2025-03-09T10:30:00Z\",\n    \"started_at\": \"2025-03-09T11:45:00Z\",\n    \"images_count\": 5\n}"
+				},
+				{
+					"name": "Obtener Tarea - No Encontrada",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks/invalid-task-id",
+							"host": [
+								"{{bff_host}}"
+							],
+							"path": [
+								"api",
+								"bff",
+								"v1",
+								"data-retrieval",
+								"tasks",
+								"invalid-task-id"
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"detail\": \"No se encontró la tarea con ID invalid-task-id\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Iniciar Tarea",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{auth_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks/{{task_id}}/start",
+					"host": [
+						"{{bff_host}}"
+					],
+					"path": [
+						"api",
+						"bff",
+						"v1",
+						"data-retrieval",
+						"tasks",
+						"{{task_id}}",
+						"start"
+					]
+				},
+				"description": "Inicia el procesamiento de una tarea de recuperación de imágenes previamente creada. Este endpoint marca la tarea como \"EN PROGRESO\" y activa los flujos de trabajo relacionados.\n\nEl BFF verifica la autorización y luego envía un comando mediante Pulsar al servicio de data-retrieval para iniciar el procesamiento."
+			},
+			"response": [
+				{
+					"name": "Iniciar Tarea - Éxito",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks/0e7496ee-2172-4e84-8169-14e7493ca0cb/start",
+							"host": [
+								"{{bff_host}}"
+							],
+							"path": [
+								"api",
+								"bff",
+								"v1",
+								"data-retrieval",
+								"tasks",
+								"0e7496ee-2172-4e84-8169-14e7493ca0cb",
+								"start"
+							]
+						}
+					},
+					"status": "Accepted",
+					"code": 203,
+					"_postman_previewlanguage": "plain",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "text/plain"
+						}
+					],
+					"cookie": [],
+					"body": "Comando de inicio de tarea enviado con éxito: 0e7496ee-2172-4e84-8169-14e7493ca0cb"
+				},
+				{
+					"name": "Iniciar Tarea - Error de Autorización",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer invalid_token",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks/0e7496ee-2172-4e84-8169-14e7493ca0cb/start",
+							"host": [
+								"{{bff_host}}"
+							],
+							"path": [
+								"api",
+								"bff",
+								"v1",
+								"data-retrieval",
+								"tasks",
+								"0e7496ee-2172-4e84-8169-14e7493ca0cb",
+								"start"
+							]
+						}
+					},
+					"status": "Unauthorized",
+					"code": 401,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"detail\": \"No autorizado para acceder a este recurso\"\n}"
+				},
+				{
+					"name": "Iniciar Tarea - Tarea No Encontrada",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks/invalid-task-id/start",
+							"host": [
+								"{{bff_host}}"
+							],
+							"path": [
+								"api",
+								"bff",
+								"v1",
+								"data-retrieval",
+								"tasks",
+								"invalid-task-id",
+								"start"
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"detail\": \"No se encontró la tarea con ID invalid-task-id\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Subir Imagen a Tarea",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{auth_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "format",
+							"value": "DICOM",
+							"description": "Formato de la imagen médica (DICOM, JPEG, PNG, TIFF, RAW)",
+							"type": "text"
+						},
+						{
+							"key": "modality",
+							"value": "XRAY",
+							"description": "Modalidad de la imagen (XRAY, MRI, CT, ULTRASOUND, etc.)",
+							"type": "text"
+						},
+						{
+							"key": "region",
+							"value": "CHEST",
+							"description": "Región anatómica (CHEST, HEAD, ABDOMEN, etc.)",
+							"type": "text"
+						},
+						{
+							"key": "dimensions",
+							"value": "1024x768",
+							"description": "Dimensiones de la imagen (opcional)",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"description": "Archivo de imagen médica a subir",
+							"type": "file",
+							"src": "/path/to/your/image.dcm"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks/{{task_id}}/images",
+					"host": [
+						"{{bff_host}}"
+					],
+					"path": [
+						"api",
+						"bff",
+						"v1",
+						"data-retrieval",
+						"tasks",
+						"{{task_id}}",
+						"images"
+					]
+				},
+				"description": "Sube una imagen médica a una tarea de recuperación específica. Este endpoint permite asociar archivos DICOM, JPEG, PNG u otros formatos de imágenes médicas a una tarea existente.\n\nLa imagen se envía en un formulario multipart junto con metadatos como formato, modalidad, región y dimensiones. El BFF verifica la autorización y reenvía la solicitud directamente al servicio de data-retrieval (no usa Pulsar debido a las limitaciones para transferir archivos binarios grandes)."
+			},
+			"response": [
+				{
+					"name": "Subir Imagen - Éxito",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "format",
+									"value": "DICOM",
+									"type": "text"
+								},
+								{
+									"key": "modality",
+									"value": "XRAY",
+									"type": "text"
+								},
+								{
+									"key": "region",
+									"value": "CHEST",
+									"type": "text"
+								},
+								{
+									"key": "dimensions",
+									"value": "1024x768",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/path/to/your/image.dcm"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks/0e7496ee-2172-4e84-8169-14e7493ca0cb/images",
+							"host": [
+								"{{bff_host}}"
+							],
+							"path": [
+								"api",
+								"bff",
+								"v1",
+								"data-retrieval",
+								"tasks",
+								"0e7496ee-2172-4e84-8169-14e7493ca0cb",
+								"images"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 203,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"task_id\": \"0e7496ee-2172-4e84-8169-14e7493ca0cb\",\n    \"image_id\": \"e0f45a6b-7c8d-9e0f-1a2b-3c4d5e6f7a8b\",\n    \"filename\": \"image.dcm\",\n    \"file_path\": \"/data/retrieval/HSJ-001/BATCH-2025-010/image.dcm\",\n    \"modality\": \"XRAY\",\n    \"region\": \"CHEST\",\n    \"size_bytes\": 2356789\n}"
+				},
+				{
+					"name": "Subir Imagen - Error de Autorización",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer invalid_token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "format",
+									"value": "DICOM",
+									"type": "text"
+								},
+								{
+									"key": "modality",
+									"value": "XRAY",
+									"type": "text"
+								},
+								{
+									"key": "region",
+									"value": "CHEST",
+									"type": "text"
+								},
+								{
+									"key": "dimensions",
+									"value": "1024x768",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/path/to/your/image.dcm"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks/0e7496ee-2172-4e84-8169-14e7493ca0cb/images",
+							"host": [
+								"{{bff_host}}"
+							],
+							"path": [
+								"api",
+								"bff",
+								"v1",
+								"data-retrieval",
+								"tasks",
+								"0e7496ee-2172-4e84-8169-14e7493ca0cb",
+								"images"
+							]
+						}
+					},
+					"status": "Unauthorized",
+					"code": 401,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"detail\": \"No autorizado para acceder a este recurso\"\n}"
+				},
+				{
+					"name": "Subir Imagen - Tarea No Encontrada",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "format",
+									"value": "DICOM",
+									"type": "text"
+								},
+								{
+									"key": "modality",
+									"value": "XRAY",
+									"type": "text"
+								},
+								{
+									"key": "region",
+									"value": "CHEST",
+									"type": "text"
+								},
+								{
+									"key": "dimensions",
+									"value": "1024x768",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/path/to/your/image.dcm"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks/invalid-task-id/images",
+							"host": [
+								"{{bff_host}}"
+							],
+							"path": [
+								"api",
+								"bff",
+								"v1",
+								"data-retrieval",
+								"tasks",
+								"invalid-task-id",
+								"images"
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"detail\": \"No se encontró la tarea con ID invalid-task-id\"\n}"
+				},
+				{
+					"name": "Subir Imagen - Formato de Archivo Inválido",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "format",
+									"value": "DICOM",
+									"type": "text"
+								},
+								{
+									"key": "modality",
+									"value": "XRAY",
+									"type": "text"
+								},
+								{
+									"key": "region",
+									"value": "CHEST",
+									"type": "text"
+								},
+								{
+									"key": "dimensions",
+									"value": "1024x768",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/path/to/your/document.pdf"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{bff_host}}/api/bff/v1/data-retrieval/tasks/0e7496ee-2172-4e84-8169-14e7493ca0cb/images",
+							"host": [
+								"{{bff_host}}"
+							],
+							"path": [
+								"api",
+								"bff",
+								"v1",
+								"data-retrieval",
+								"tasks",
+								"0e7496ee-2172-4e84-8169-14e7493ca0cb",
+								"images"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"detail\": \"Formato de archivo no soportado para imágenes médicas. El formato DICOM declarado no coincide con el tipo de archivo detectado.\"\n}"
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://auth-app-1017406670325.us-central1.run.app/auth",
+					"protocol": "https",
+					"host": [
+						"auth-app-1017406670325",
+						"us-central1",
+						"run",
+						"app"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "auth success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://auth-app-1017406670325.us-central1.run.app/auth",
+							"protocol": "https",
+							"host": [
+								"auth-app-1017406670325",
+								"us-central1",
+								"run",
+								"app"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"authorized\": true,\n    \"user_id\": \"1\",\n    \"message\": \"Token is valid\"\n}"
+				},
+				{
+					"name": "auth error",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://auth-app-1017406670325.us-central1.run.app/auth?Authorization=token adasda",
+							"protocol": "https",
+							"host": [
+								"auth-app-1017406670325",
+								"us-central1",
+								"run",
+								"app"
+							],
+							"path": [
+								"auth"
+							],
+							"query": [
+								{
+									"key": "Authorization",
+									"value": "token adasda"
+								}
+							]
+						}
+					},
+					"status": "Forbidden",
+					"code": 403,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"detail\": \"Error validating token: 403: Token is invalid\"\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "bff_host",
+			"value": "https://bff-retrieval-app-1017406670325.us-central1.run.app",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhdGFQYXJ0bmVyIn0.BnLA0KJC3-fQBzpK0KfSO0p4s-KUEHNlpdvUx0Qkzsk",
+			"type": "string"
+		},
+		{
+			"key": "task_id",
+			"value": "0e7496ee-2172-4e84-8169-14e7493ca0cb",
+			"type": "string"
+		},
+		{
+			"key": "batch_id",
+			"value": "BATCH-2025-010",
+			"type": "string"
+		}
+	]
+}
